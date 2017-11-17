@@ -5,46 +5,38 @@ const locations = require('weather-js');
 const blessed = require('blessed');
 const contrib = require('blessed-contrib');
 
-var screen = blessed.screen();
+    var screen = blessed.screen();
 
-var ip = process.argv.slice(2);
-var url = 'http://ipinfo.io/' + ip;
+    var ip = process.argv.slice(2);
+    var url = 'http://ipinfo.io/' + ip;
 
-request(url)
-    .then((response) => {
-        var data = JSON.parse(response);
-        var ip = data.ip;
-        var city = data.city;
-        var country = listOfCountries[data.country];
+    request(url)
+        .then((response) => {
+            var data = JSON.parse(response);
+            var ip = data.ip;
+            var city = data.city;
+            var country = listOfCountries[data.country];
 
-        locations.find({search: `${city}`, degreeType:'C'}, (err, result) => {
-            if (err) throw err;
-            var lat = result[0].location.lat;
-            var long = result[0].location.long;
+            locations.find({search: `${city}`, degreeType:'C'}, (err, result) => {
+                if (err) throw err;
+                var lat = result[0].location.lat;
+                var long = result[0].location.long;
 
-            var map = contrib.map({ label: `IP Location of ${city}` })
-            screen.append(map);
-            map.addMarker({ 
-                "lon": long, 
-                "lat": lat, 
-                color: "red", 
-                char: "X" 
+                var map = contrib.map({ label: `IP Location is ${city}` })
+                screen.append(map);
+                map.addMarker({ 
+                    "lon": long, 
+                    "lat": lat, 
+                    color: "red", 
+                    char: "X" 
+                })
+
+                screen.key(['escape', 'q', 'C-c'], function (ch, key) {
+                    return process.exit(0);
+                });
+
+                screen.render()
             })
-
-            screen.key(['escape', 'q', 'C-c'], function (ch, key) {
-                return process.exit(0);
-            });
-
-            screen.render()
         })
-    })
-    .catch(err => console.log(err))
+        .catch(err => console.log(err))
 
-
-        // console.log(`
-        // ----------------------------------
-        //         IP: ${ip}
-        //         City: ${city}
-        //         Country: ${country}
-        // ----------------------------------
-        // `.green)
