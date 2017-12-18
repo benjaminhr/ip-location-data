@@ -22,7 +22,7 @@ const contrib = require('blessed-contrib');
                 var lat = result[0].location.lat;
                 var long = result[0].location.long;
 
-                var map = contrib.map({ label: `IP Location is ${city}` })
+                var map = contrib.map({ label: `IP: ${ip} is located in ${city}` })
                 screen.append(map);
                 map.addMarker({ 
                     "lon": long, 
